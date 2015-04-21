@@ -25,6 +25,7 @@ plugins:
   - ./plugins/console
   - ./plugins/patternMatcher
   - ./plugins/httpOptions
+  - ./plugins/hipchat
   # - ./plugins/email
   # - ./plugins/basicAuth
 
@@ -54,3 +55,7 @@ webPageTest:
   server: 'http://www.webpagetest.org'
   key:
   testOptions: 
+
+hipchat:
+  token: '------------'
+  roomId: '---------'
