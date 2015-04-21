@@ -26,6 +26,7 @@ plugins:
   - ./plugins/patternMatcher
   - ./plugins/httpOptions
   - ./plugins/hipchat
+  - ./plugins/nexmo
   # - ./plugins/email
   # - ./plugins/basicAuth
 
@@ -57,5 +58,10 @@ webPageTest:
   testOptions: 
 
 hipchat:
+  botName: 'uptimeBot'
   token: '------------'
   roomId: '---------'
+
+nexmo:
+  key: '------------'
+  secret: '---------'

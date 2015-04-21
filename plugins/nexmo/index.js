@@ -14,46 +14,30 @@
  */
 var Ping = require('../../models/ping');
 var CheckEvent = require('../../models/checkEvent');
-var Hipchat = require('node-hipchat')
-var config     = require('config')
+var Nexmo = require('easynexmo')
+var config = require('config')
 
 exports.initWebApp = function(enableNewEvents, enableNewPings) {
 	if (typeof enableNewEvents == 'undefined') enableNewEvents = true;
 	if (typeof enableNewPings == 'undefined') enableNewPings = true;
 	if (enableNewEvents) registerNewEventsLogger();
 	if (enableNewPings) registerNewPingsLogger();
-};
+}
 
-var HC = new Hipchat(config.hipchat.token);
+Nexmo.initialize(config.nexmo.key, config.nexmo.secret, "https", true)
 
-function postMessage(from, text,status) {
-	var color='yellow'
-	switch(status) {
-		case 'up':
-			color = 'green'
-			break
-		case 'down':
-		case 'paused':
-		case 'restarted':
-			color = 'red'
-			break
-	}
-	var params = {
-		room_id: config.hipchat.roomId,
-		from: from,
-		message: text,
-		color: color
-	}
-
-	HC.postMessage(params, function(data) {
+function postMessage(text) {
+	console.log("SMS SENDING:" + text)
+	Nexmo.sendTextMessage("uptime_bot", "79150971683", text, {}, function() {
 		console.log("Message has been sent!")
 		console.log(arguments)
-	});
+	})
 }
 
 var registerNewEventsLogger = function() {
 	CheckEvent.on('afterInsert', function(checkEvent) {
 		checkEvent.findCheck(function(err, check) {
+			console.log("QQQ")
 			var message = check.name + ' ';
 			switch (checkEvent.message) {
 				case 'paused':
@@ -61,7 +45,7 @@ var registerNewEventsLogger = function() {
 					message += 'was ' + checkEvent.message;
 					break;
 				case 'down':
-					message += 'went down  (' + checkEvent.details + ')';
+					message += 'went down (' + checkEvent.details + ')';
 					break;
 				case 'up':
 					if (checkEvent.downtime) {
@@ -74,7 +58,7 @@ var registerNewEventsLogger = function() {
 					message += '(unknown event)';
 			}
 
-			postMessage(config.hipchat.botName,timestamp()+" "+message,checkEvent.message);
+			postMessage(timestamp() + " " + message)
 		});
 	});
 };
