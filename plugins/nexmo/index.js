@@ -16,6 +16,7 @@ var Ping = require('../../models/ping');
 var CheckEvent = require('../../models/checkEvent');
 var Nexmo = require('easynexmo')
 var config = require('config')
+var moment   = require('moment-timezone');
 
 exports.initWebApp = function(enableNewEvents, enableNewPings) {
 	if (typeof enableNewEvents == 'undefined') enableNewEvents = true;
@@ -26,9 +27,13 @@ exports.initWebApp = function(enableNewEvents, enableNewPings) {
 
 Nexmo.initialize(config.nexmo.key, config.nexmo.secret, "https", true)
 
-function postMessage(text) {
-	console.log("SMS SENDING:" + text)
-	Nexmo.sendTextMessage("uptime_bot", "79150971683", text, {}, function() {
+function postMessage(sendTo, message) {
+	var tz = config.nexmo.defaultTimezone
+	if (typeof(sendTo.timezone) === "string")
+		tz = sendTo.timezone
+	var time = moment().tz(tz).format("HH:mm")
+
+	Nexmo.sendTextMessage("uptime_bot", sendTo.phone, time + " " + message, {}, function() {
 		console.log("Message has been sent!")
 		console.log(arguments)
 	})
@@ -37,7 +42,7 @@ function postMessage(text) {
 var registerNewEventsLogger = function() {
 	CheckEvent.on('afterInsert', function(checkEvent) {
 		checkEvent.findCheck(function(err, check) {
-			console.log("QQQ")
+			var sendTo = config.nexmo.sendTo
 			var message = check.name + ' ';
 			switch (checkEvent.message) {
 				case 'paused':
@@ -58,7 +63,9 @@ var registerNewEventsLogger = function() {
 					message += '(unknown event)';
 			}
 
-			postMessage(timestamp() + " " + message)
+			for (var i = 0; i < sendTo.length; i++) {
+				postMessage(sendTo[i], message)
+			}
 		});
 	});
 };
@@ -74,8 +81,3 @@ var registerNewPingsLogger = function() {
 	});
 	*/
 };
-
-
-function timestamp() {
-	return new Date().toLocaleTimeString();
-}

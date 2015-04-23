@@ -16,6 +16,7 @@ var Ping = require('../../models/ping');
 var CheckEvent = require('../../models/checkEvent');
 var Hipchat = require('node-hipchat')
 var config     = require('config')
+var moment   = require('moment-timezone')
 
 exports.initWebApp = function(enableNewEvents, enableNewPings) {
 	if (typeof enableNewEvents == 'undefined') enableNewEvents = true;
@@ -42,7 +43,8 @@ function postMessage(from, text,status) {
 		room_id: config.hipchat.roomId,
 		from: from,
 		message: text,
-		color: color
+		color: color,
+		notify: 1
 	}
 
 	HC.postMessage(params, function(data) {
@@ -93,5 +95,5 @@ var registerNewPingsLogger = function() {
 
 
 function timestamp() {
-	return new Date().toLocaleTimeString();
+	return moment().tz("Europe/Moscow").format("HH:mm")
 }

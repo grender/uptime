@@ -65,3 +65,8 @@ hipchat:
 nexmo:
   key: '------------'
   secret: '---------'
+  defaultTimezone: 'Europe/Moscow'
+  sendTo:
+    - phone: '1231231212'
+      timezone: 'Europe/Paris'
+    - phone: '1231231213'
