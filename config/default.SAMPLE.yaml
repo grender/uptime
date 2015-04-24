@@ -9,7 +9,9 @@ mongodb:
 
 monitor:
   name:                   origin
-  apiUrl:                 'http://localhost:8082/api' # must be accessible without a proxy
+  apiUrl:                 'https://localhost:8082/api' # must be accessible without a proxy
+  keyFilename:            '----'
+  certFilename:           '----'
   pollingInterval:        10000      # ten seconds
   timeout:                5000       # five seconds
   userAgent:              NodeUptime/3.0 (https://github.com/springerpe/uptime)

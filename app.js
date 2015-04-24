@@ -3,6 +3,7 @@
  */
 
 var http       = require('http');
+var https      = require('https');
 var url        = require('url');
 var express    = require('express');
 var config     = require('config');
@@ -25,10 +26,24 @@ var mongoose   = require('./bootstrap');
 var a = analyzer.createAnalyzer(config.analyzer);
 a.start();
 
+function createServer() {
+	var serverUrl = url.parse(config.url);
+	if(serverUrl.protocol==="http:")
+			return http.createServer(app);
+	else if(serverUrl.protocol==="https:") {
+		var o = {
+			key:  fs.readFileSync(config.monitor.keyFilename),
+			cert: fs.readFileSync(config.monitor.certFilename)
+		}
+		console.log(o)
+		return https.createServer(o,app);
+	}
+}
+
 // web front
 
 var app = module.exports = express();
-var server = http.createServer(app);
+var server = createServer();
 
 app.configure(function(){
   app.use(app.router);
@@ -144,16 +159,15 @@ var monitorInstance;
 
 if (!module.parent) {
   var serverUrl = url.parse(config.url);
-  var port;
-  if (config.server && config.server.port) {
-    console.error('Warning: The server port setting is deprecated, please use the url setting instead');
-    port = config.server.port;
-  } else {
-    port = serverUrl.port;
+  var port =serverUrl.port;
     if (port === null) {
-      port = 80;
+		if(serverUrl.protocol==="http:")
+			port = 80;
+		else if(serverUrl.protocol==="https:")
+			port = 443;
+		else
+			throw new Error("Error unknown protocol without port");
     }
-  }
   var port = process.env.PORT || port;
   var host = process.env.HOST || serverUrl.hostname;
   server.listen(port, function(){
