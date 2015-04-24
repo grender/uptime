@@ -35,7 +35,6 @@ function createServer() {
 			key:  fs.readFileSync(config.monitor.keyFilename),
 			cert: fs.readFileSync(config.monitor.certFilename)
 		}
-		console.log(o)
 		return https.createServer(o,app);
 	}
 }
