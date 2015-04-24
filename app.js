@@ -18,6 +18,8 @@ var dashboardApp = require('./app/dashboard/app');
 
 // database
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+
 var mongoose   = require('./bootstrap');
 
 var a = analyzer.createAnalyzer(config.analyzer);
