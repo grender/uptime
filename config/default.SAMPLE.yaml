@@ -1,4 +1,4 @@
-url: 'http://localhost:8082'
+url: 'https://localhost:8082'
 
 mongodb:
   server:   localhost
