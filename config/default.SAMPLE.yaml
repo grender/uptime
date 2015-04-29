@@ -27,8 +27,9 @@ plugins:
   - ./plugins/console
   - ./plugins/patternMatcher
   - ./plugins/httpOptions
-  - ./plugins/hipchat
   - ./plugins/nexmo
+  - ./plugins/slack
+  # - ./plugins/hipchat
   # - ./plugins/email
   # - ./plugins/basicAuth
 
@@ -63,6 +64,17 @@ hipchat:
   botName: 'uptimeBot'
   token: '------------'
   roomId: '---------'
+
+slack:
+  hookUrl: 'https://hooks.slack.com/services/-----------------------'
+  dashboardUrl: 'http://------------'
+  channel:      '#----------'
+  username:     'uptime'
+  iconEmoji:
+     up:        ':four_leaf_clover:'
+     down:      ':fire:'
+     paused:    ':warning:'
+     restarted: ':arrow_forward:'
 
 nexmo:
   key: '------------'
